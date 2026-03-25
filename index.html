@@ -107,57 +107,13 @@
         </div>
     </section>
 
-    <!-- TELA LOGIN -->
-    <section id="login" class="screen">
-        <div class="glass-card" style="max-width: 350px; margin: 0 auto;">
-            <div style="text-align: center; margin-bottom: 25px;">
-                <i class="fas fa-shield-alt" style="font-size: 3rem; color: var(--primary-orange); margin-bottom: 10px;"></i>
-                <h2>Guará 12</h2>
-                <p style="font-size: 0.85rem; opacity: 0.7;">Acesse sua estação de monitoramento</p>
-            </div>
-            
-            <form onsubmit="handleLogin(event)">
-                <div class="input-group">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="login-email" placeholder="E-mail" required>
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="login-pass" placeholder="Senha" required>
-                </div>
-                <button type="submit" class="btn-action" style="margin-top: 20px;">ACESSAR SISTEMA</button>
-            </form>
-            <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-                Não tem conta? <a href="#" onclick="switchScreen('signup')" style="color: var(--primary-orange);">Cadastre-se</a>
-            </p>
-        </div>
-    </section>
-
-    <!-- TELA CADASTRO -->
-    <section id="signup" class="screen">
-        <div class="glass-card">
-            <h2 style="text-align: center; margin-bottom: 20px;">Cadastro</h2>
-            <form onsubmit="handleSignUp(event)">
-                <input type="text" id="signup-name" placeholder="Nome Completo" required>
-                <input type="email" id="signup-email" placeholder="E-mail" required>
-                <input type="password" id="signup-pass" placeholder="Sua Senha" required>
-                <button type="submit" class="btn-action">CRIAR CONTA</button>
-            </form>
-            <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-                Já tem conta? <a href="#" onclick="switchScreen('login')" style="color: var(--primary-orange);">Fazer Login</a>
-            </p>
-        </div>
-    </section>
-
-    <!-- TELA PERFIL -->
-    <section id="profile" class="screen">
-        <div class="glass-card" style="text-align: center;">
-            <div style="width: 80px; height: 80px; background: var(--primary-orange); border-radius: 50%; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-user" style="font-size: 2rem; color: white;"></i>
-            </div>
-            <h3 id="profile-name">Usuário Guará</h3>
-            <p id="profile-email" style="opacity: 0.7; margin-bottom: 20px;">carregando...</p>
-            <button onclick="handleLogout()" class="btn-action" style="background: #e74c3c;">SAIR DA CONTA</button>
+    <!-- TELA CONFIGURAÇÕES -->
+    <section id="settings" class="screen">
+        <div class="glass-card" style="text-align: center; padding: 40px 20px;">
+            <i class="fas fa-cog" style="font-size: 3rem; color: var(--primary-orange); margin-bottom: 20px;"></i>
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">Guará 12</h2>
+            <p style="opacity: 0.8; font-size: 1.1rem;">Versão 1.0.0</p>
+            <div style="margin-top: 30px; font-size: 0.8rem; opacity: 0.5;">© 2026 Projeto Guará</div>
         </div>
     </section>
 
@@ -175,9 +131,9 @@
             <i class="fas fa-info-circle"></i>
             <span>Sobre</span>
         </button>
-        <button id="nav-account" class="nav-item" onclick="handleAccountNav(this)">
-            <i class="fas fa-user-circle"></i>
-            <span>Conta</span>
+        <button id="nav-settings" class="nav-item" onclick="switchScreen('settings', this)">
+            <i class="fas fa-cog"></i>
+            <span>Config</span>
         </button>
     </nav>
 
