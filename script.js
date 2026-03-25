@@ -1,35 +1,11 @@
 // --- 1. Navegação SPA (Menu) ---
 
-let currentUser = null; // Estado global do usuário
 let map; // Variável global para o mapa
 let envChartInstance; // Variável global para o gráfico
-
-// Função para mostrar alerta de acesso negado na tela
-function showAuthAlert(msg) {
-    if (document.querySelector('.auth-alert')) return;
-    const alert = document.createElement('div');
-    alert.className = 'auth-alert';
-    alert.innerHTML = `<i class="fas fa-shield-alt"></i> ${msg}`;
-    document.body.appendChild(alert);
-    setTimeout(() => {
-        alert.style.opacity = '0';
-        alert.style.transition = 'opacity 0.5s ease';
-        setTimeout(() => alert.remove(), 500);
-    }, 3000);
-}
 
 function switchScreen(screenId, btnElement) {
     console.log(`[Navegação] Solicitado: ${screenId}`);
     
-    // --- Trava de Segurança ---
-    // Telas que exigem login
-    const restrictedScreens = ['home', 'reports', 'profile'];
-    if (restrictedScreens.includes(screenId) && !currentUser) {
-        console.warn("Acesso negado: Redirecionando para login.");
-        showAuthAlert("Acesso Negado: Entre na sua conta para continuar.");
-        return switchScreen('login', document.getElementById('nav-account'));
-    }
-
     // Esconde todas as telas
     const screens = document.querySelectorAll('.screen');
     screens.forEach(el => el.classList.remove('active'));
@@ -38,6 +14,10 @@ function switchScreen(screenId, btnElement) {
     const target = document.getElementById(screenId);
     if (target) {
         target.classList.add('active');
+        // Se for para a tela de configurações, não precisa de lógica extra
+        if (screenId === 'settings') {
+            console.log("Acessando informações do sistema.");
+        }
         // Corrige o bug do Leaflet quando a tela muda
         if (screenId === 'home' && map) {
             setTimeout(() => map.invalidateSize(), 100);
@@ -59,94 +39,17 @@ function switchScreen(screenId, btnElement) {
     if (btnElement) btnElement.classList.add('active');
 }
 
-// Gerencia o clique no botão de conta (Login ou Perfil)
-function handleAccountNav(btnElement) {
-    const navBtn = btnElement || document.getElementById('nav-account');
-    console.log("[Conta] Verificando estado do usuário:", currentUser ? "Logado" : "Deslogado");
-    
-    if (currentUser) {
-        switchScreen('profile', navBtn);
-    } else {
-        // Se não estiver logado, garante que vá para o login
-        switchScreen('login', document.getElementById('nav-account'));
-    }
-}
-
 // --- 2. Configuração do Supabase ---
 // Removido para funcionar sem banco de dados externo.
 
 // --- 3. Funções de Autenticação ---
 
 // Verificar sessão existente ao carregar
-function checkSession() {
-    const savedUser = localStorage.getItem('guara_user');
-    if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        updateProfileUI(currentUser);
-    } else {
-        // Se não houver usuário, força a tela de login ao iniciar
-        const accountBtn = document.getElementById('nav-account');
-        switchScreen('login', accountBtn);
-    }
-}
-window.addEventListener('load', checkSession);
-
-// Login
-function handleLogin(e) {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-pass').value;
-
-    // Simulação de login local
-    const user = { email: email, user_metadata: { full_name: email.split('@')[0] } };
-    currentUser = user;
-    localStorage.setItem('guara_user', JSON.stringify(user));
-    
-    alert('Login realizado (Modo Local)!');
-    updateProfileUI(user);
-    switchScreen('home', document.getElementById('nav-home')); // Vai para a Home após login
-}
-
-// Cadastro (Sign Up)
-function handleSignUp(e) {
-    e.preventDefault();
-    const name = document.getElementById('signup-name').value;
-    const email = document.getElementById('signup-email').value;
-
-    const user = { email: email, user_metadata: { full_name: name } };
-    currentUser = user;
-    localStorage.setItem('guara_user', JSON.stringify(user));
-
-    alert('Cadastro realizado com sucesso (Modo Local)!');
-    updateProfileUI(user);
-    switchScreen('home', document.getElementById('nav-home')); // Vai para a Home após cadastro
-}
-
-// Logout
-function handleLogout() {
-    alert('Você saiu da conta.');
-    currentUser = null;
-    localStorage.removeItem('guara_user');
-    
-    // Limpa a UI
-    const emailEl = document.getElementById('profile-email');
-    const nameEl = document.getElementById('profile-name');
-    if (emailEl) emailEl.innerText = 'Carregando...';
-    if (nameEl) nameEl.innerText = 'Usuário Guará';
-    
-    switchScreen('login', document.getElementById('nav-account'));
-}
-
-// Atualizar UI do Perfil
-function updateProfileUI(user) {
-    if (document.getElementById('profile-email')) {
-        document.getElementById('profile-email').innerText = user.email;
-    }
-    if (document.getElementById('profile-name')) {
-        const name = user.user_metadata.full_name || 'Usuário Guará';
-        document.getElementById('profile-name').innerText = name;
-    }
-}
+// Não há funções de autenticação em modo offline
+window.addEventListener('load', () => {
+    // Garante que a tela inicial seja sempre a home
+    switchScreen('home', document.getElementById('nav-home'));
+});
 
 // --- 4. Relógio e Data ---
 function updateClock() {
