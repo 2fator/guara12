@@ -71,6 +71,12 @@
                 <span class="sensor-val"><span id="wind-val">0</span> km/h</span>
                 <div class="progress-container"><div id="wind-bar" class="progress-bar" style="background: #9e9e9e;"></div></div>
             </div>
+            <div class="glass-card sensor-card">
+                <i class="fas fa-cloud-showers-heavy card-icon" style="color: #607d8b;"></i>
+                <p>Chance de Chuva</p>
+                <span class="sensor-val"><span id="rain-prob-val">0</span>%</span>
+                <div class="progress-container"><div id="rain-prob-bar" class="progress-bar" style="background: #607d8b;"></div></div>
+            </div>
         </div>
 
         <div class="glass-card" style="margin-top: 15px;">
@@ -83,7 +89,10 @@
 
         <div class="glass-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <p><i class="fas fa-map-marker-alt"></i> Localização: Estação Tamancão</p>
+                <p>
+                    <i class="fas fa-map-marker-alt"></i> 
+                    Localização: <a href="https://share.google/4FwWJtATKc9UihQKk" target="_blank" style="color: inherit; text-decoration: none; border-bottom: 1px dashed var(--primary-orange);">Estação Tamancão</a>
+                </p>
                 <button onclick="getUserLocation()" style="background: none; border: none; color: var(--primary-orange); cursor: pointer;"><i class="fas fa-crosshairs"></i> Minha Posição</button>
             </div>
             <div id="map"></div>
@@ -112,7 +121,19 @@
         <div class="glass-card" style="text-align: center; padding: 40px 20px;">
             <i class="fas fa-cog" style="font-size: 3rem; color: var(--primary-orange); margin-bottom: 20px;"></i>
             <h2 style="font-size: 2rem; margin-bottom: 10px;">Guará 12</h2>
-            <p style="opacity: 0.8; font-size: 1.1rem;">Versão 1.0.0</p>
+            <p style="opacity: 0.8; font-size: 1.1rem; margin-bottom: 20px;">Versão 1.0.0</p>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 80%; margin: 20px auto;">
+                <span style="font-size: 0.9rem; opacity: 0.8;">Simular Chuva</span>
+                <label class="switch">
+                    <input type="checkbox" id="rain-switch">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <button onclick="downloadReport()" class="btn-action" style="margin-top: 25px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);">
+
+                <i class="fas fa-download"></i> BAIXAR RELATÓRIO TXT
+            </button>
             <div style="margin-top: 30px; font-size: 0.8rem; opacity: 0.5;">© 2026 Projeto Guará</div>
         </div>
     </section>
