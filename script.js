@@ -107,8 +107,24 @@ async function fetchRealData() {
 async function fetchSaoLuisWeather() {
     console.log("Buscando clima real de São Luís...");
     try {
+        // Inicializa o switch de chuva
+        const rainSwitch = document.getElementById('rain-switch');
+        
+        if (rainSwitch) {
+            rainSwitch.addEventListener('change', function() {
+                localStorage.setItem('rainOverride', this.checked);
+                updateRainEffect(this.checked);
+            });
+            
+            const savedState = localStorage.getItem('rainOverride') === 'true';
+            rainSwitch.checked = savedState;
+            updateRainEffect(savedState);
+        } else {
+            console.warn("Switch de chuva não encontrado.");
+        }
+    
         // Coordenadas de São Luís, MA
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=-2.5307&longitude=-44.3068&current=temperature_2m,relative_humidity_2m,wind_speed_10m,cloud_cover,is_day&timezone=America%2FFortaleza`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=-2.5715&longitude=-44.3114281&current=temperature_2m,relative_humidity_2m,wind_speed_10m,cloud_cover,is_day&hourly=precipitation_probability&timezone=America%2FFortaleza&forecast_days=1`;
         const response = await fetch(url);
         const data = await response.json();
         
@@ -116,10 +132,18 @@ async function fetchSaoLuisWeather() {
             const temp = data.current.temperature_2m;
             const hum = data.current.relative_humidity_2m;
             const wind = data.current.wind_speed_10m;
+            
+            // Obtém a probabilidade de chuva para a hora atual
+            const currentHour = new Date().getHours();
+            const rainProb = data.hourly.precipitation_probability[currentHour];
+
             // Estimativa de lux baseada na cobertura de nuvens e se é dia
             const lux = data.current.is_day ? Math.floor(1200 - (data.current.cloud_cover * 8)) : 10;
             
-            updateUI(temp, hum, lux, null, wind);
+            // Cálculo da maré sincronizado (Ciclo de ~12.4h)
+            const tide = (3.5 + Math.sin(Date.now() / 7108000) * 3.0).toFixed(1);
+            
+            updateUI(temp, hum, lux, tide, wind, rainProb);
             console.log("Dados reais de São Luís carregados via satélite.");
         }
     } catch (error) {
@@ -141,15 +165,48 @@ function updateSensorsSimulation() {
     const hum = Math.floor(65 + Math.random() * 25);
     const lux = Math.floor(900 + Math.random() * 300);
     const wind = (5 + Math.random() * 15).toFixed(1);
+    const rainProb = Math.floor(Math.random() * 100);
     
     // Simulação da maré de São Luís (Variação de 0.5m a 6.5m)
     // O ciclo completo dura aprox. 12.4 horas
     const tide = (3.5 + Math.sin(Date.now() / 22350000) * 3.0).toFixed(1);
     
-    updateUI(temp, hum, lux, tide, wind);
+    updateUI(temp, hum, lux, tide, wind, rainProb);
 }
 
-function updateUI(temp, hum, lux, tide, wind) {
+// --- Função para Baixar Relatório ---
+function downloadReport() {
+    const temp = document.getElementById('temp-val')?.innerText || '0';
+    const hum = document.getElementById('hum-val')?.innerText || '0';
+    const rainProb = document.getElementById('rain-prob-val')?.innerText || '0';
+    const tide = document.getElementById('tide-val')?.innerText || '0.0';
+    const wind = document.getElementById('wind-val')?.innerText || '0';
+    const date = document.getElementById('date')?.innerText || '';
+    const time = document.getElementById('clock')?.innerText || '';
+
+    const content = `RELATÓRIO DE MONITORAMENTO - GUARÁ 12\n` +
+                    `Data: ${date} ${time}\n` +
+                    `----------------------------------\n` +
+                    `Temperatura: ${temp}°C\n` +
+                    `Umidade: ${hum}%\n` +
+                    `Chance de Chuva: ${rainProb}%\n` +
+                    `Nível da Maré: ${tide}m\n` +
+                    `Velocidade do Vento: ${wind} km/h\n` +
+                    `----------------------------------\n` +
+                    `Localização: Estação Tamancão, São Luís - MA`;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `guara12_relatorio_${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function updateUI(temp, hum, lux, tide, wind, rainProb) {
     const rainContainer = document.getElementById('rain-effect');
     const thunderSound = document.getElementById('thunder-sound');
 
@@ -188,6 +245,10 @@ function updateUI(temp, hum, lux, tide, wind) {
         animateCounter('wind-val', wind, 1500);
     }
 
+    if (rainProb !== undefined) {
+        animateCounter('rain-prob-val', rainProb, 1500);
+    }
+
     // Barras de progresso com verificação
     const tempBar = document.getElementById('temp-bar');
     if (tempBar) tempBar.style.width = Math.min((temp / 50) * 100, 100) + '%';
@@ -203,6 +264,9 @@ function updateUI(temp, hum, lux, tide, wind) {
 
     const windBar = document.getElementById('wind-bar');
     if (windBar) windBar.style.width = Math.min((wind / 60) * 100, 100) + '%';
+
+    const rainBar = document.getElementById('rain-prob-bar');
+    if (rainBar) rainBar.style.width = rainProb + '%';
 
     document.querySelectorAll('.card-icon').forEach(icon => {
         icon.classList.remove('pulse-animation');
@@ -235,7 +299,7 @@ function getUserLocation() {
 
 if (typeof L !== 'undefined') {
     const lat = -2.5715; 
-    const lng = -44.3218;
+    const lng = -44.3114281;
     
     // Verifica se o container do mapa existe
     const mapContainer = document.getElementById('map');
