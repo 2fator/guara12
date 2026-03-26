@@ -209,6 +209,10 @@ input:focus {
     animation-iteration-count: infinite;
 }
 
+.bird--one { animation-duration: 0.8s; }
+.bird--two { animation-duration: 1.1s; animation-delay: -0.5s; }
+.bird--three { animation-duration: 0.9s; animation-delay: -0.2s; }
+.bird--four { animation-duration: 1.2s; animation-delay: -0.7s; }
 .bird--five { animation-duration: 1.0s; animation-delay: -0.3s; }
 .bird--six { animation-duration: 0.7s; animation-delay: -0.1s; }
 
@@ -236,29 +240,40 @@ input:focus {
     100% { transform: scale(0.6) translateX(115vw) translateY(0); }
 }
 
-/* --- Mensagem de Acesso Negado --- */
-.auth-alert {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(191, 54, 12, 0.95); /* Laranja escuro vibrante */
-    color: white;
-    padding: 14px 28px;
-    border-radius: 50px;
-    z-index: 9999;
-    font-weight: 600;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border: 1px solid rgba(255,255,255,0.3);
-    animation: alertSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    white-space: nowrap;
+/* Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
 }
 
-@keyframes alertSlideIn {
-    0% { transform: translate(-50%, -100px); opacity: 0; }
-    100% { transform: translate(-50%, 0); opacity: 1; }
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider:before { transform: translateX(18px); }
