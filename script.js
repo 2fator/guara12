@@ -169,7 +169,7 @@ function updateSensorsSimulation() {
     
     // Simulação da maré de São Luís (Variação de 0.5m a 6.5m)
     // O ciclo completo dura aprox. 12.4 horas
-    const tide = (4.6 + Math.sin((Date.now() / 7108000) + 3.5) * 0.4).toFixed(1);
+    const tide = (1.4 + Math.sin((Date.now() / 7108000) + 0.4) * 0.4).toFixed(1);
     
     updateUI(temp, hum, lux, tide, wind, rainProb);
 }
