@@ -141,7 +141,7 @@ async function fetchSaoLuisWeather() {
             const lux = data.current.is_day ? Math.floor(1200 - (data.current.cloud_cover * 8)) : 10;
             
             // Cálculo da maré sincronizado (Ciclo de ~12.4h)
-            const tide = (1.4 + Math.sin((Date.now() / 7108000) + 0.7) * 0.4).toFixed(1);
+            const tide = (1.4 + Math.sin((Date.now() / 7108) + 0.7) * 0.4).toFixed(1);
             
             updateUI(temp, hum, lux, tide, wind, rainProb);
             console.log("Dados reais de São Luís carregados via satélite.");
@@ -169,7 +169,7 @@ function updateSensorsSimulation() {
     
     // Simulação da maré de São Luís (Variação de 0.5m a 6.5m)
     // O ciclo completo dura aprox. 12.4 horas
-    const tide = (1.4 + Math.sin((Date.now() / 7108000) + 0.4) * 0.4).toFixed(1);
+    const tide = (1.4 + Math.sin((Date.now() / 71080) + 0.4) * 0.4).toFixed(1);
     
     updateUI(temp, hum, lux, tide, wind, rainProb);
 }
